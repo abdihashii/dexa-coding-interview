@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Form, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
+import { searchGoogle } from '../services/serpapi';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -14,8 +15,8 @@ export async function loader(args: LoaderFunctionArgs) {
     q: z.string().optional(),
   });
 
-  // Initialize searchResults as an empty array
-  const searchResults: unknown[] = [];
+  // If there's a search query, search Google and return the results
+  const searchResults = q?.length ? await searchGoogle(q) : [];
 
   const summary = q?.length ? `TODO: Summary of search results for "${q}"` : '';
 
@@ -26,6 +27,21 @@ export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
   return (
     <main className="flex h-screen items-center justify-center bg-slate-200">
+      <section>
+        <ul className="space-y-4">
+          {searchResults.map((result) => (
+            <li
+              key={result.title}
+              className="text-blue-500 underline hover:text-blue-300"
+            >
+              <a href={result.link} target={'_blank'} rel="noreferrer">
+                {result.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section className="w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-medium">
