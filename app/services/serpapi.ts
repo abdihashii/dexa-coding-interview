@@ -6,8 +6,11 @@ import { EnvVars } from './env-vars';
  * Docs: https://github.com/serpapi/serpapi-javascript
  */
 
-// @TODO: Add a type for the search result.
-export type SearchResult = unknown;
+export type SearchResult = {
+  title: string;
+  link: string;
+  snippet: string;
+};
 
 /** Search Google for the given query using the SerpApi service. */
 export async function searchGoogle(query: string): Promise<SearchResult[]> {
