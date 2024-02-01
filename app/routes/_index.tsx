@@ -38,19 +38,14 @@ export default function Index() {
         </div>
 
         <Form method="get" className="flex flex-col gap-4">
-          <div className="flex flex-col gap">
-            <label htmlFor="search" className="text-sm font-semibold">
-              Search
-            </label>
-            <input
-              className="border border-gray-300 rounded-md p-2"
-              type="search"
-              name="q"
-              id="search"
-              defaultValue={q ?? ''}
-              placeholder="Search the web"
-            />
-          </div>
+          <input
+            className="border border-gray-300 rounded-md p-2"
+            type="search"
+            name="q"
+            id="search"
+            defaultValue={q ?? ''}
+            placeholder="Search the web"
+          />
 
           <button
             type="submit"
