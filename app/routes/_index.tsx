@@ -59,6 +59,7 @@ export default function Index() {
         </Form>
       </section>
 
+      {/* Search Results */}
       <section>
         <ul className="space-y-4">
           {searchResults.map((result) => (
