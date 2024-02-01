@@ -9,11 +9,16 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader(args: LoaderFunctionArgs) {
+  // Uses zodix to parse the query string and grabs the "q" parameter
   const { q } = zx.parseQuery(args.request, {
     q: z.string().optional(),
   });
+
+  // Initialize searchResults as an empty array
   const searchResults: unknown[] = [];
+
   const summary = q?.length ? `TODO: Summary of search results for "${q}"` : '';
+
   return json({ q, searchResults, summary });
 }
 
