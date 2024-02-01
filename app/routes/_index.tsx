@@ -4,6 +4,7 @@ import { Form, useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
+import { summarizeSearchResults } from '~/services/openai';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -18,7 +19,12 @@ export async function loader(args: LoaderFunctionArgs) {
   // If there's a search query, search Google and return the results
   const searchResults = q?.length ? await searchGoogle(q) : [];
 
-  const summary = q?.length ? `TODO: Summary of search results for "${q}"` : '';
+  const summary = q?.length
+    ? await summarizeSearchResults({
+        query: q ?? '',
+        searchResults,
+      })
+    : '';
 
   return json({ q, searchResults, summary });
 }
