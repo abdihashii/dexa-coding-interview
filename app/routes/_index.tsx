@@ -53,7 +53,13 @@ export default function Index() {
             Answer
           </h2>
 
-          <p>{summary ? <p>{summary}</p> : null}</p>
+          {navigation.state === 'loading' ? (
+            <div className="flex items-center justify-center">
+              <Loader2 className="animate-spin w-12 h-12" />
+            </div>
+          ) : (
+            <p className="text-gray-600">{summary}</p>
+          )}
         </section>
 
         <Form method="get" className="flex flex-col gap-4">
