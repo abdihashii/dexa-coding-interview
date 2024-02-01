@@ -1,11 +1,11 @@
 import { json } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
+import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
 import { summarizeSearchResults } from '~/services/openai';
-import { TextSearch } from 'lucide-react';
+import { Loader2, TextSearch } from 'lucide-react';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -32,6 +32,8 @@ export async function loader(args: LoaderFunctionArgs) {
 
 export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+
   return (
     <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
       <section className="w-1/2 bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
@@ -75,18 +77,25 @@ export default function Index() {
 
       {/* Search Results */}
       <section>
-        <ul className="space-y-4">
-          {searchResults.map((result) => (
-            <li
-              key={result.title}
-              className="text-blue-500 underline hover:text-blue-300"
-            >
-              <a href={result.link} target={'_blank'} rel="noreferrer">
-                {result.title}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {navigation.state === 'loading' ? (
+          <div className="flex flex-col items-center justify-center gap-2">
+            <p>Please wait while we load the search results :)</p>
+            <Loader2 className="animate-spin w-12 h-12" />
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {searchResults.map((result) => (
+              <li
+                key={result.title}
+                className="text-blue-500 underline hover:text-blue-300"
+              >
+                <a href={result.link} target={'_blank'} rel="noreferrer">
+                  {result.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </main>
   );
