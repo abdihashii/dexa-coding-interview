@@ -26,22 +26,7 @@ export async function loader(args: LoaderFunctionArgs) {
 export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
   return (
-    <main className="flex h-screen items-center justify-center bg-slate-200">
-      <section>
-        <ul className="space-y-4">
-          {searchResults.map((result) => (
-            <li
-              key={result.title}
-              className="text-blue-500 underline hover:text-blue-300"
-            >
-              <a href={result.link} target={'_blank'} rel="noreferrer">
-                {result.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
+    <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
       <section className="w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-medium">
@@ -76,6 +61,21 @@ export default function Index() {
         </Form>
 
         {summary ? <p>{`Summary: ${summary}`}</p> : null}
+      </section>
+
+      <section>
+        <ul className="space-y-4">
+          {searchResults.map((result) => (
+            <li
+              key={result.title}
+              className="text-blue-500 underline hover:text-blue-300"
+            >
+              <a href={result.link} target={'_blank'} rel="noreferrer">
+                {result.title}
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
   );
