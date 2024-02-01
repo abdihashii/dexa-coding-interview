@@ -25,21 +25,42 @@ export async function loader(args: LoaderFunctionArgs) {
 export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
   return (
-    <div>
-      <h1>Welcome to the Dexa coding interview!</h1>
-      <p>See the readme for instructions.</p>
-      <Form method="get">
-        <label htmlFor="search">Search</label>
-        <input
-          type="search"
-          name="q"
-          id="search"
-          defaultValue={q ?? ''}
-          placeholder="Search the web"
-        />
-        <button type="submit">Search</button>
-      </Form>
-      {summary ? <p>{`Summary: ${summary}`}</p> : null}
-    </div>
+    <main className="flex h-screen items-center justify-center bg-slate-200">
+      <section className="w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-medium">
+            Welcome to the Dexa coding interview!
+          </h1>
+          <p className="text-sm text-gray-600">
+            See the readme for instructions.
+          </p>
+        </div>
+
+        <Form method="get" className="flex flex-col gap-4">
+          <div className="flex flex-col gap">
+            <label htmlFor="search" className="text-sm font-semibold">
+              Search
+            </label>
+            <input
+              className="border border-gray-300 rounded-md p-2"
+              type="search"
+              name="q"
+              id="search"
+              defaultValue={q ?? ''}
+              placeholder="Search the web"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 text-white font-semibold rounded-md p-2 hover:bg-blue-600 transition-colors duration-300 ease-in-out"
+          >
+            Search
+          </button>
+        </Form>
+
+        {summary ? <p>{`Summary: ${summary}`}</p> : null}
+      </section>
+    </main>
   );
 }
