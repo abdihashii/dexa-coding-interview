@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
 import { summarizeSearchResults } from '~/services/openai';
+import { TextSearch } from 'lucide-react';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -33,7 +34,7 @@ export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
   return (
     <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
-      <section className="w-1/2 max-w-lg bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
+      <section className="w-1/2 bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
         <div className="text-center space-y-2 border-b border-b-slate-400 pb-4">
           <h1 className="text-2xl font-medium">
             Welcome to the Dexa coding interview!
@@ -44,7 +45,14 @@ export default function Index() {
         </div>
 
         {/* Summary */}
-        <section>{summary ? <p>{summary}</p> : null}</section>
+        <section className="space-y-2">
+          <h2 className="text-xl font-medium flex flex-row items-center gap-2">
+            <TextSearch />
+            Answer
+          </h2>
+
+          <p>{summary ? <p>{summary}</p> : null}</p>
+        </section>
 
         <Form method="get" className="flex flex-col gap-4">
           <input
