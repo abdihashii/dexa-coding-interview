@@ -37,6 +37,9 @@ export default function Index() {
           </p>
         </div>
 
+        {/* Summary */}
+        <section>{summary ? <p>{summary}</p> : null}</section>
+
         <Form method="get" className="flex flex-col gap-4">
           <input
             className="border border-gray-300 rounded-md p-2"
@@ -54,8 +57,6 @@ export default function Index() {
             Search
           </button>
         </Form>
-
-        {summary ? <p>{`Summary: ${summary}`}</p> : null}
       </section>
 
       <section>
