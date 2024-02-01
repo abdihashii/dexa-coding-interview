@@ -1,19 +1,24 @@
 import { getJson } from 'serpapi';
 import { EnvVars } from './env-vars';
+import type { SearchResult } from '~/types';
 
 /**
  * Use this to get the Google search results for a query.
  * Docs: https://github.com/serpapi/serpapi-javascript
  */
 
-export type SearchResult = {
-  title: string;
-  link: string;
-  snippet: string;
-};
-
 /** Search Google for the given query using the SerpApi service. */
 export async function searchGoogle(query: string): Promise<SearchResult[]> {
-  // @TODO: Use the SerpApi SDK to perform a Google search.
-  return [];
+  try {
+    const searchResults = await getJson({
+      engine: 'google',
+      api_key: EnvVars.serpapi(),
+      q: query,
+    });
+
+    return searchResults['organic_results'];
+  } catch (error) {
+    console.error('Error searching Google:', error);
+    throw error;
+  }
 }
