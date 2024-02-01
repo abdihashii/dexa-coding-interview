@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zx } from 'zodix';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Dexa Coding Interview' }];
+  return [{ title: 'Dexa Coding Interview | Haji' }];
 };
 
 export async function loader(args: LoaderFunctionArgs) {
