@@ -68,7 +68,7 @@ export default function Index() {
         </div>
 
         {/* Summary */}
-        <section className="space-y-2">
+        <div className="space-y-2">
           <h2 className="text-xl font-medium flex flex-row items-center gap-2">
             <TextSearch />
             Answer
@@ -81,7 +81,7 @@ export default function Index() {
           ) : (
             <p className="text-gray-600">{summary}</p>
           )}
-        </section>
+        </div>
 
         <Form method="get" className="flex flex-col gap-4">
           <input
