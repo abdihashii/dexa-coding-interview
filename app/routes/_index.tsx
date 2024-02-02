@@ -59,6 +59,9 @@ export default function Index() {
 
   const navigation = useNavigation();
 
+  // State that will hold the search query for the form input
+  const [searchQuery, setSearchQuery] = useState('');
+
   // State that will force remounting the search input to clear it
   const [inputKey, setInputKey] = useState('input-key');
 
@@ -66,6 +69,7 @@ export default function Index() {
   useEffect(() => {
     if (navigation.state === 'idle' && inputKey !== 'input-key') {
       setInputKey('input-key'); // Reset the key to force-clear the input field
+      setSearchQuery(''); // Clear the input field
     }
   }, [navigation.state, inputKey]);
 
@@ -136,6 +140,8 @@ export default function Index() {
             className="border border-gray-300 rounded-md p-2"
             type="search"
             name="q"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search the web"
             autoFocus={true}
           />
@@ -143,10 +149,17 @@ export default function Index() {
           <button
             type="submit"
             className="bg-blue-500 text-white font-semibold rounded-md p-2 hover:bg-blue-600 transition-colors duration-300 ease-in-out"
+            disabled={
+              navigation.state === 'loading' ||
+              navigation.state === 'submitting' ||
+              searchQuery.length === 0
+            }
           >
             Search
           </button>
         </Form>
+
+        {searchQuery.length > 0 && searchQuery}
       </section>
     </main>
   );
