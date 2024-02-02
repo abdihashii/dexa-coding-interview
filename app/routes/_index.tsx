@@ -8,6 +8,7 @@ import { summarizeSearchResults } from '~/services/openai';
 import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
 import SourceCard from '~/components/SourceCard';
+import { v4 as uuidv4 } from 'uuid';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -85,7 +86,7 @@ export default function Index() {
               <ul className="flex flex-row gap-2 overflow-x-scroll">
                 {searchResults.map((result) => (
                   <SourceCard
-                    key={result.title}
+                    key={uuidv4()}
                     title={result.title}
                     link={result.link}
                   />
