@@ -5,8 +5,9 @@ import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
 import { summarizeSearchResults } from '~/services/openai';
-import { Loader2, TextSearch } from 'lucide-react';
+import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
+import SourceCard from '~/components/SourceCard';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -69,19 +70,43 @@ export default function Index() {
           </p>
         </div>
 
-        {/* Summary */}
-        <div className="space-y-2">
-          <h2 className="text-xl font-medium flex flex-row items-center gap-2">
-            <TextSearch />
-            Answer
-          </h2>
+        {/* Summary & Sources */}
+        <div>
+          <h2 className="text-3xl mb-6">{q}</h2>
+
+          {/* Sources */}
+          {searchResults.length > 0 && (
+            <div className="flex flex-col gap-2 mb-6">
+              <h3 className="text-xl font-medium flex items-center gap-2">
+                <LibrarySquare />
+                Sources
+              </h3>
+
+              <ul className="flex flex-row gap-2 overflow-x-scroll">
+                {searchResults.map((result) => (
+                  <SourceCard
+                    key={result.title}
+                    title={result.title}
+                    link={result.link}
+                  />
+                ))}
+              </ul>
+            </div>
+          )}
 
           {navigation.state === 'loading' ? (
             <div className="flex items-center justify-center">
               <Loader2 className="animate-spin w-12 h-12" />
             </div>
           ) : (
-            <p className="text-gray-600">{summary}</p>
+            <div className="flex flex-col gap-2">
+              <h3 className="text-xl font-medium flex flex-row items-center gap-2">
+                <TextSearch />
+                Answer
+              </h3>
+
+              <p className="text-gray-600">{summary}</p>
+            </div>
           )}
         </div>
 
