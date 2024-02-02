@@ -19,7 +19,7 @@ export async function loader(args: LoaderFunctionArgs) {
   });
 
   // If there's no search query, return an empty response
-  if (!q?.length) {
+  if (!q) {
     return json({ q: '', searchResults: [], summary: '' });
   }
 
