@@ -6,6 +6,7 @@ import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
 import { summarizeSearchResults } from '~/services/openai';
 import { Loader2, TextSearch } from 'lucide-react';
+import { cache } from '~/services/cache';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -17,15 +18,35 @@ export async function loader(args: LoaderFunctionArgs) {
     q: z.string().optional(),
   });
 
-  // If there's a search query, search Google and return the results
-  const searchResults = q?.length ? await searchGoogle(q) : [];
+  // If there's no search query, return an empty response
+  if (!q?.length) {
+    return json({ q: '', searchResults: [], summary: '' });
+  }
 
-  const summary = q?.length
-    ? await summarizeSearchResults({
-        query: q ?? '',
-        searchResults,
-      })
-    : '';
+  // Check if the query is already in the cache
+  if (cache.has(q)) {
+    const data = cache.get(q);
+
+    if (data) {
+      return json({
+        q,
+        searchResults: data.searchResults,
+        summary: data.summary,
+      });
+    }
+  }
+
+  // If there's a search query, search Google and return the results
+  const searchResults = await searchGoogle(q);
+
+  // Use Dextar to summarize the search results
+  const summary = await summarizeSearchResults({
+    query: q ?? '',
+    searchResults,
+  });
+
+  // Cache the results and summary to in memory cache using the cache service
+  await cache.set(q, { searchResults, summary });
 
   return json({ q, searchResults, summary });
 }
