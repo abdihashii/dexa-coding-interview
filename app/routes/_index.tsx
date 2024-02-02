@@ -128,29 +128,6 @@ export default function Index() {
           </button>
         </Form>
       </section>
-
-      {/* Search Results */}
-      <section>
-        {navigation.state === 'loading' ? (
-          <div className="flex flex-col items-center justify-center gap-2">
-            <p>Please wait while we load the search results :)</p>
-            <Loader2 className="animate-spin w-12 h-12" />
-          </div>
-        ) : (
-          <ul className="space-y-4">
-            {searchResults.map((result) => (
-              <li
-                key={result.title}
-                className="text-blue-500 underline hover:text-blue-300"
-              >
-                <a href={result.link} target={'_blank'} rel="noreferrer">
-                  {result.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </main>
   );
 }
