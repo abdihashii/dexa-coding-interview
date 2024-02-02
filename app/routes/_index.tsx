@@ -100,14 +100,16 @@ export default function Index() {
               <Loader2 className="animate-spin w-12 h-12" />
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-xl font-medium flex flex-row items-center gap-2">
-                <TextSearch />
-                Answer
-              </h3>
+            summary && (
+              <div className="flex flex-col gap-2">
+                <h3 className="text-xl font-medium flex flex-row items-center gap-2">
+                  <TextSearch />
+                  Answer
+                </h3>
 
-              <p className="text-gray-600">{summary}</p>
-            </div>
+                <p className="text-gray-600">{summary}</p>
+              </div>
+            )
           )}
         </div>
 
