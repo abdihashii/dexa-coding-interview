@@ -9,6 +9,7 @@ import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
 import SourceCard from '~/components/SourceCard';
 import { v4 as uuidv4 } from 'uuid';
+import { useEffect, useState } from 'react';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -57,6 +58,16 @@ export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
 
   const navigation = useNavigation();
+
+  // State that will force remounting the search input to clear it
+  const [inputKey, setInputKey] = useState('input-key');
+
+  // Reset the forms search input
+  useEffect(() => {
+    if (navigation.state === 'idle' && inputKey !== 'input-key') {
+      setInputKey('input-key'); // Reset the key to force-clear the input field
+    }
+  }, [navigation.state, inputKey]);
 
   return (
     <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
@@ -113,14 +124,20 @@ export default function Index() {
           )}
         </div>
 
-        <Form method="get" className="flex flex-col gap-4">
+        <Form
+          method="get"
+          className="flex flex-col gap-4"
+          onSubmit={() => {
+            setInputKey(`input-key-${uuidv4()}`);
+          }}
+        >
           <input
+            key={inputKey}
             className="border border-gray-300 rounded-md p-2"
             type="search"
             name="q"
-            id="search"
-            defaultValue={q ?? ''}
             placeholder="Search the web"
+            autoFocus={true}
           />
 
           <button
