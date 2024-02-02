@@ -47,8 +47,6 @@ export async function summarizeSearchResults(args: {
       messages,
     });
 
-    console.log('Chat response:', response);
-
     if (!response.message.content) {
       throw new Error('No response from chat model');
     }
