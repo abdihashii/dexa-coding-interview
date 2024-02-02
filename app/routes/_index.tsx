@@ -158,8 +158,6 @@ export default function Index() {
             Search
           </button>
         </Form>
-
-        {searchQuery.length > 0 && searchQuery}
       </section>
     </main>
   );
