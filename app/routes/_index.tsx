@@ -53,11 +53,13 @@ export async function loader(args: LoaderFunctionArgs) {
 
 export default function Index() {
   const { q, searchResults, summary } = useLoaderData<typeof loader>();
+
   const navigation = useNavigation();
 
   return (
     <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
       <section className="w-1/2 bg-white p-6 rounded-lg shadow-lg flex flex-col gap-4">
+        {/* Header */}
         <div className="text-center space-y-2 border-b border-b-slate-400 pb-4">
           <h1 className="text-2xl font-medium">
             Welcome to the Dexa coding interview!
