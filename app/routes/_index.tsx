@@ -1,14 +1,15 @@
+import { useEffect, useState } from 'react';
 import { json } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { useLoaderData, useNavigation } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
-import { searchGoogle } from '../services/serpapi';
-import { createNewQuery, summarizeSearchResults } from '~/services/openai';
-import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
+import { searchGoogle } from '~/services/serpapi';
+import { createNewQuery, summarizeSearchResults } from '~/services/openai';
+
+import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import SourceCard from '~/components/SourceCard';
-import { useEffect, useState } from 'react';
 import SearchForm from '~/components/SearchForm';
 
 export const meta: MetaFunction = () => {
