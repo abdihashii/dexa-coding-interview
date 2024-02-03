@@ -1,6 +1,6 @@
 import { json } from '@remix-run/node';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Form, useLoaderData, useNavigation } from '@remix-run/react';
+import { useLoaderData, useNavigation } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
@@ -8,8 +8,8 @@ import { createNewQuery, summarizeSearchResults } from '~/services/openai';
 import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
 import SourceCard from '~/components/SourceCard';
-import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
+import SearchForm from '~/components/SearchForm';
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Dexa Coding Interview | Haji' }];
@@ -118,12 +118,6 @@ export default function Index() {
 
   const [prevContext, setPrevContext] = useState('');
 
-  // State that will hold the search query for the form input
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // State that will force remounting the search input to clear it
-  const [inputKey, setInputKey] = useState('input-key');
-
   // When new data is loaded, updated the prevContext
   useEffect(() => {
     if (q && summary) {
@@ -135,14 +129,6 @@ export default function Index() {
       setPrevContext(encodeURIComponent(JSON.stringify(newContext)));
     }
   }, [q, summary]);
-
-  // Reset the forms search input
-  useEffect(() => {
-    if (navigation.state === 'idle' && inputKey !== 'input-key') {
-      setInputKey('input-key'); // Reset the key to force-clear the input field
-      setSearchQuery(''); // Clear the input field
-    }
-  }, [navigation.state, inputKey]);
 
   return (
     <main className="flex flex-col h-screen items-center justify-center bg-slate-200 gap-8">
@@ -201,38 +187,7 @@ export default function Index() {
           </div>
         </div>
 
-        <Form
-          method="get"
-          className="flex flex-col gap-4"
-          onSubmit={() => {
-            setInputKey(`input-key-${uuidv4()}`);
-          }}
-        >
-          <input
-            key={inputKey}
-            className="border border-gray-300 rounded-md p-2"
-            type="search"
-            name="q"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search the web"
-            autoFocus={true}
-          />
-
-          <input type="hidden" name="prevContext" value={prevContext} />
-
-          <button
-            type="submit"
-            className="bg-blue-500 text-white font-semibold rounded-md p-2 hover:bg-blue-600 transition-colors duration-300 ease-in-out"
-            disabled={
-              navigation.state === 'loading' ||
-              navigation.state === 'submitting' ||
-              searchQuery.length === 0
-            }
-          >
-            Search
-          </button>
-        </Form>
+        <SearchForm prevContext={prevContext} />
       </section>
     </main>
   );
