@@ -172,7 +172,7 @@ export default function Index() {
               <ul className="flex flex-row gap-2 overflow-x-scroll">
                 {searchResults.map((result) => (
                   <SourceCard
-                    key={uuidv4()}
+                    key={result.link}
                     title={result.title}
                     link={result.link}
                   />
