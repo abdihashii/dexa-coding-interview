@@ -51,9 +51,8 @@ export async function loader(args: LoaderFunctionArgs) {
     ? JSON.parse(decodeURIComponent(prevContext))
     : null;
 
-  // If there's a previous context, then we need to create a new search query based on the previous context
-  // and the current search query
   if (previousContext) {
+    // Using OpenAI, create a new search query based on the previous context and the current search query
     const newQuery = await createNewQuery({
       query: q,
       previousContext,
@@ -71,7 +70,7 @@ export async function loader(args: LoaderFunctionArgs) {
 
       if (data) {
         return json({
-          q,
+          q: newQuery,
           searchResults: data.searchResults,
           summary: data.summary,
         });
