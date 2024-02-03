@@ -181,22 +181,24 @@ export default function Index() {
             </div>
           )}
 
-          {navigation.state === 'loading' ? (
-            <div className="flex items-center justify-center">
-              <Loader2 className="animate-spin w-12 h-12" />
-            </div>
-          ) : (
-            summary && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-medium flex flex-row items-center gap-2">
-                  <TextSearch />
-                  Answer
-                </h3>
-
-                <p className="text-gray-600">{summary}</p>
+          <div aria-live="polite">
+            {navigation.state === 'loading' ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="animate-spin w-12 h-12" />
               </div>
-            )
-          )}
+            ) : (
+              summary && (
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-xl font-medium flex flex-row items-center gap-2">
+                    <TextSearch />
+                    Answer
+                  </h3>
+
+                  <p className="text-gray-600">{summary}</p>
+                </div>
+              )
+            )}
+          </div>
         </div>
 
         <Form
