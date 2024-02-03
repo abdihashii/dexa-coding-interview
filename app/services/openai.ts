@@ -21,6 +21,35 @@ const chatModel = new ChatModel({
   },
 });
 
+/** Use the LLM to create a new search query based on the current query and the query from the previous context */
+export async function createNewQuery(args: {
+  query: string;
+  previousContext: {
+    query: string;
+  };
+}) {
+  const messages: Prompt.Msg[] = [
+    Msg.user(
+      `Last time we talked about "${args.previousContext.query}". Now considering that context, and I want to ask a new question based on that. I want to ask: "${args.query}". Please create an updated search query to ask about "${args.query}" based on the previous context. Make sure to ask a question that is clear, concise, and short because I want to use it on the Google Search Engine. Thank you!`
+    ),
+  ];
+
+  try {
+    const response = await chatModel.run({
+      messages,
+    });
+
+    if (!response.message.content) {
+      throw new Error('No response from chat model');
+    }
+
+    return response.message.content;
+  } catch (error) {
+    console.error('Error creating new query:', error);
+    throw error;
+  }
+}
+
 /** Summarize Google search results using the OpenAI API. */
 export async function summarizeSearchResults(args: {
   query: string;
