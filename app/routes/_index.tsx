@@ -27,9 +27,15 @@ export async function loader(args: LoaderFunctionArgs) {
     return json({ q: '', searchResults: [], summary: '' });
   }
 
+  // Create a new cache key for the search query and the previous context
+  const cacheKey = JSON.stringify({
+    query: q,
+    context: prevContext,
+  });
+
   // Check if the query is already in the cache
-  if (cache.has(q)) {
-    const data = cache.get(q);
+  if (cache.has(cacheKey)) {
+    const data = cache.get(cacheKey);
 
     if (data) {
       return json({
@@ -53,9 +59,15 @@ export async function loader(args: LoaderFunctionArgs) {
       previousContext,
     });
 
+    // Create a new cache key for the new query and the previous context
+    const newCacheKey = JSON.stringify({
+      query: newQuery,
+      context: prevContext,
+    });
+
     // Check if the new query is in the cache, we need this check in case the LLM creates the same query
-    if (cache.has(newQuery)) {
-      const data = cache.get(newQuery);
+    if (cache.has(newCacheKey)) {
+      const data = cache.get(newCacheKey);
 
       if (data) {
         return json({
@@ -90,7 +102,7 @@ export async function loader(args: LoaderFunctionArgs) {
   });
 
   // Cache the results and summary to in memory cache using the cache service
-  await cache.set(q, { searchResults, summary });
+  await cache.set(cacheKey, { searchResults, summary });
 
   return json({ q, searchResults, summary });
 }
