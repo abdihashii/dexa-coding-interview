@@ -47,9 +47,14 @@ export async function loader(args: LoaderFunctionArgs) {
   }
 
   // Decode the previous content if it exists
-  const previousContext = prevContext
-    ? JSON.parse(decodeURIComponent(prevContext))
-    : null;
+  let previousContext;
+  try {
+    previousContext = prevContext
+      ? JSON.parse(decodeURIComponent(prevContext))
+      : null;
+  } catch (error) {
+    console.error('Error parsing previous context', error);
+  }
 
   if (previousContext) {
     // Using OpenAI, create a new search query based on the previous context and the current search query
