@@ -54,7 +54,15 @@ export async function createNewQuery(args: {
 export async function summarizeSearchResults(args: {
   query: string;
   searchResults: SearchResult[];
+  previousContext?: {
+    query: string;
+    summary: string;
+  };
 }): Promise<string> {
+  const contextString = args.previousContext
+    ? `Previous context: "${args.previousContext.query}"\nPrevious summary: "${args.previousContext.summary}"`
+    : '';
+
   // Preprocess the search results to get the text to summarize.
   const searchSummary = args.searchResults
     .map((result, index) => {
@@ -67,7 +75,7 @@ export async function summarizeSearchResults(args: {
   // Start the chat model and have it summarize the search results.
   const messages: Prompt.Msg[] = [
     Msg.user(
-      `Summarize the following search results for "${args.query}":\n\n${searchSummary}\n\nPlease be very sure to not repeat the same information even if they are somewhat similar, this is very important! Please skim the content by going to the source URL if the query and snippets are not beneificial. Make sure your response is concise, clear, informative, and friendly! Try to never go past 4 sentences in the response, try your best to compress the information and removing any unneeded information, just try your best to answer the query. Thank you!`
+      `${contextString}\n\nSummarize the following search results for ${args.query} while using the previous context above as the previous search query (if it exists):\n\n${searchSummary}\n\nPlease be very sure to not repeat the same information even if they are somewhat similar, this is very important! Please skim the content by going to the source URL if the query and snippets are not beneificial. Make sure your response is concise, clear, informative, and friendly! Try to never go past 4 sentences in the response, try your best to compress the information and removing any unneeded information, just try your best to answer the query. Thank you!`
     ),
   ];
 

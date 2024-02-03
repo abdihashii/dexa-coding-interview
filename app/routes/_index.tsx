@@ -4,7 +4,7 @@ import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { z } from 'zod';
 import { zx } from 'zodix';
 import { searchGoogle } from '../services/serpapi';
-import { summarizeSearchResults } from '~/services/openai';
+import { createNewQuery, summarizeSearchResults } from '~/services/openai';
 import { LibrarySquare, Loader2, TextSearch } from 'lucide-react';
 import { cache } from '~/services/cache';
 import SourceCard from '~/components/SourceCard';
@@ -17,8 +17,9 @@ export const meta: MetaFunction = () => {
 
 export async function loader(args: LoaderFunctionArgs) {
   // Uses zodix to parse the query string and grabs the "q" parameter
-  const { q } = zx.parseQuery(args.request, {
+  const { q, prevContext } = zx.parseQuery(args.request, {
     q: z.string().optional(),
+    prevContext: z.string().optional(),
   });
 
   // If there's no search query, return an empty response
@@ -39,6 +40,45 @@ export async function loader(args: LoaderFunctionArgs) {
     }
   }
 
+  // Decode the previous content if it exists
+  const previousContext = prevContext
+    ? JSON.parse(decodeURIComponent(prevContext))
+    : null;
+
+  // If there's a previous context, then we need to create a new search query based on the previous context
+  // and the current search query
+  if (previousContext) {
+    const newQuery = await createNewQuery({
+      query: q,
+      previousContext,
+    });
+
+    // Check if the new query is in the cache, we need this check in case the LLM creates the same query
+    if (cache.has(newQuery)) {
+      const data = cache.get(newQuery);
+
+      if (data) {
+        return json({
+          q,
+          searchResults: data.searchResults,
+          summary: data.summary,
+        });
+      }
+    }
+
+    // Get the search results for the new query
+    const newSearchResults = await searchGoogle(newQuery);
+
+    // Use Dextar to summarize the search results
+    const newSummary = await summarizeSearchResults({
+      query: newQuery,
+      searchResults: newSearchResults,
+      previousContext,
+    });
+
+    return json({ q, searchResults: newSearchResults, summary: newSummary });
+  }
+
   // If there's a search query, search Google and return the results
   const searchResults = await searchGoogle(q);
 
@@ -46,6 +86,7 @@ export async function loader(args: LoaderFunctionArgs) {
   const summary = await summarizeSearchResults({
     query: q ?? '',
     searchResults,
+    previousContext,
   });
 
   // Cache the results and summary to in memory cache using the cache service
@@ -59,11 +100,25 @@ export default function Index() {
 
   const navigation = useNavigation();
 
+  const [prevContext, setPrevContext] = useState('');
+
   // State that will hold the search query for the form input
   const [searchQuery, setSearchQuery] = useState('');
 
   // State that will force remounting the search input to clear it
   const [inputKey, setInputKey] = useState('input-key');
+
+  // When new data is loaded, updated the prevContext
+  useEffect(() => {
+    if (q && summary) {
+      const newContext = {
+        query: q,
+        summary,
+      };
+
+      setPrevContext(encodeURIComponent(JSON.stringify(newContext)));
+    }
+  }, [q, summary]);
 
   // Reset the forms search input
   useEffect(() => {
@@ -145,6 +200,8 @@ export default function Index() {
             placeholder="Search the web"
             autoFocus={true}
           />
+
+          <input type="hidden" name="prevContext" value={prevContext} />
 
           <button
             type="submit"
